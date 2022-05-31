@@ -8,12 +8,18 @@ const deployFundMe: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployer } = await getNamedAccounts();
   const chainId: number = network.config.chainId!;
   const netName: string = network.name;
-  const ethUsdPriceFeedAddress = networkConfig[netName]["ethUsdPriceFeed"];
-  console.log(ethUsdPriceFeedAddress);
-  //   const fundMe: DeployResult = await deploy("FundMe", {
-  //     from: deployer,
-  //     args: [],
-  //     log: true,
-  //   });
+  let ethUsdPriceFeedAddress;
+  if (developmentChains.includes(netName)) {
+    const ethUsdAggregator = await deployments.get("MockV3Aggregator");
+    ethUsdPriceFeedAddress = ethUsdAggregator.address;
+  } else {
+    ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
+  }
+  const fundMe: DeployResult = await deploy("FundMe", {
+    from: deployer,
+    args: [ethUsdPriceFeedAddress],
+    log: true,
+  });
 };
 export default deployFundMe;
+deployFundMe.tags = ["all", "fundme"];
