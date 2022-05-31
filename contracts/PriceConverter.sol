@@ -12,8 +12,6 @@ library PriceConverter {
         view
         returns (uint256)
     {
-        // Rinkeby ETH / USD Address
-        // https://docs.chain.link/docs/ethereum-addresses/
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         // ETH/USD rate in 18 digit
         return uint256(answer * 10000000000);

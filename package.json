@@ -36,6 +36,7 @@
     "test": "yarn hardhat test",
     "clean": "yarn hardhat clean",
     "compile": "yarn hardhat compile",
-    "deploy": "yarn hardhat deploy"
+    "deploy": "yarn hardhat deploy",
+    "deploy:mocks": "yarn hardhat deploy --tags mocks"
   }
 }
