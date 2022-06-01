@@ -56,7 +56,7 @@ describe("FundMe", async function () {
         deployer
       );
 
-      const transactionResponse = await fundMe.withdraw();
+      const transactionResponse = await fundMe.cheaperWithdraw();
       const transactionReceipt = await transactionResponse.wait();
       const { gasUsed, effectiveGasPrice } = transactionReceipt;
       const gasCost = gasUsed.mul(effectiveGasPrice);
@@ -70,6 +70,14 @@ describe("FundMe", async function () {
       assert.equal(
         startingFundMeBalance.add(startingDeployerBalance).toString(),
         endingDeployerBalance.add(gasCost).toString()
+      );
+    });
+
+    it("Only allows the owner to withdraw", async function () {
+      const accounts = await ethers.getSigners();
+      const fundMeConnectedContract = await fundMe.connect(accounts[1]);
+      await expect(fundMeConnectedContract.withdraw()).to.be.revertedWith(
+        "FundMe__NotOwner"
       );
     });
   });
