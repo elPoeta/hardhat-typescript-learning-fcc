@@ -25,6 +25,7 @@ const deployFundMe: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   if (!developmentChains.includes(netName) && process.env.ETHERSCAN_API_KEY) {
     verify(fundMe.address, args);
   }
+  log("-----------------------------------------------------");
 };
 export default deployFundMe;
 deployFundMe.tags = ["all", "fundme"];
