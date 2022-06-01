@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction, DeployResult } from "hardhat-deploy/types";
 import { networkConfig, developmentChains } from "../helper-hardhat.config";
+import { verify } from "../utils/verify";
 
 const deployFundMe: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { getNamedAccounts, deployments, network } = hre;
@@ -15,11 +16,15 @@ const deployFundMe: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   } else {
     ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
   }
+  const args = [ethUsdPriceFeedAddress];
   const fundMe: DeployResult = await deploy("FundMe", {
     from: deployer,
-    args: [ethUsdPriceFeedAddress],
+    args,
     log: true,
   });
+  if (!developmentChains.includes(netName) && process.env.ETHERSCAN_API_KEY) {
+    verify(fundMe.address, args);
+  }
 };
 export default deployFundMe;
 deployFundMe.tags = ["all", "fundme"];

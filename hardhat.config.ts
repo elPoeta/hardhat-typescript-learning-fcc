@@ -10,18 +10,14 @@ import "hardhat-deploy";
 
 dotenv.config();
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
-
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "";
+const RINKEBY_RPC_URL =
+  process.env.RINKEBY_RPC_URL ||
+  "https://eth-mainnet.alchemyapi.io/v2/your-api-key";
+const PRIVATE_KEY =
+  process.env.PRIVATE_KEY ||
+  "0x11ee3108a03081fe260ecdc106554d09d9d1209bcafd46942b10e02943effc4a";
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -29,18 +25,20 @@ const config: HardhatUserConfig = {
   },
   defaultNetwork: "hardhat",
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    rinkeby: {
+      url: RINKEBY_RPC_URL,
+      accounts: [PRIVATE_KEY],
     },
     localhost: {
       url: "http://localhost:31337",
     },
   },
   gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
+    enabled: true,
     currency: "USD",
+    outputFile: "gas-report.txt",
+    noColors: true,
+    // coinmarketcap: COINMARKETCAP_API_KEY,
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
